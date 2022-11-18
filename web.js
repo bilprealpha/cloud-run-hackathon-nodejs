@@ -14,6 +14,7 @@ app.get('/', function (req, res) {
 });
 
 app.post('/', function (req, res) {
+  console.log('body',JSON.stringify(req.body));
   console.log('last move ',_lastMove);
   console.log('last dim ',_lastDim);
   console.log('is moved ',_isMoved);
