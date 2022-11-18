@@ -26,9 +26,9 @@ app.post('/', function (req, res) {
   let state = req.body.arena.state;
   let newMove = null
 
- let myDirection = state[myUrl].direction;
- let newScore = state[myUrl].score;
- let dims = [state[myUrl].x, state[myUrl].y];
+ let myDirection = state[myUrl] ? state[myUrl].direction : 'W';
+ let newScore = state[myUrl] ? state[myUrl].score : 0;
+ let dims = state[myUrl] ? [state[myUrl].x, state[myUrl].y] : [0,0];
 
  console.log('new score ',newScore, 'last score ',lastscore);
  if(newScore >= lastscore){
