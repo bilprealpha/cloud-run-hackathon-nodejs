@@ -1,11 +1,15 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const { MIN, MAX, RIGHTMAX, BOTTOMAX, DIRECTION, MOVES } = require('./constants');
+const { MIN, MAX, RIGHTMAX, BOTTOMAX, DIRECTION, MOVES, END } = require('./constants');
 let _isMoved = false
 let _lastMove = ''
 let _lastDim = []
+let _isTurned = false
 let lastMovedCount = 0
+let totalAttacks = 0
+let totalMoves = 0
+let lastscore = 0
 const myUrl = 'https://cloud-run-hackathon-nodejs-wg35wopo7q-uc.a.run.app'
 app.use(bodyParser.json());
 
@@ -20,18 +24,46 @@ app.post('/', function (req, res) {
   console.log('is moved ',_isMoved);
   let dims = req.body.arena.dims;
   let state = req.body.arena.state;
-
+  let newMove = null
  let myDirection = state[myUrl].direction;
+ let newScore = state[myUrl].score;
+ if(newScore > lastscore){
+  if(_isMoved){
+    newMove = MOVES.T
+   _isMoved = false
+  }
+  else{    
+    newMove = MOVES.R
+    _isMoved = true
+  }
+
+  res.send(newMove);
+  _lastMove = newMove
+  _lastDim = dims
+
+  return
+ }
   console.log('dims ',JSON.stringify(dims));
   console.log('myDirection ',JSON.stringify(myDirection));
   const moves = ['F', 'L', 'R'];
   const attack  = 'T'
-  let newMove = null
+  if(_lastMove === 'R' || _lastMove === 'L'){
+    _isTurned = false
+    newMove = 'F'
+    lastMovedCount++
+    _isMoved = true
+    totalMoves++
+  _lastMove = newMove
+  _lastDim = dims
+    res.send(newMove);
+    return
+  }
   if(dims === MIN){
     if(myDirection === 'S' || myDirection === 'E'){
       newMove = MOVES.F
     }else{      
       newMove = MOVES.R
+      _isTurned = true
     }
   }
   else if(dims === RIGHTMAX){
@@ -39,6 +71,7 @@ app.post('/', function (req, res) {
       newMove = MOVES.F
       }else{
         newMove = MOVES.R
+        _isTurned = true
       }
   }
   else if(dims === MAX){
@@ -46,6 +79,7 @@ app.post('/', function (req, res) {
       newMove = MOVES.F
       }else{
         newMove = MOVES.R
+        _isTurned = true
       }
 
   }
@@ -54,28 +88,69 @@ app.post('/', function (req, res) {
       newMove = MOVES.F
       }else{
         newMove = MOVES.R
+        _isTurned = true
       }
   }
   if(newMove && lastMovedCount<3){
+    console.log('calculated')
     res.send(newMove);
     lastMovedCount++
+    totalMoves++
     _isMoved = true
   }
   else if(lastMovedCount==0){
-    newMove = moves[Math.floor(Math.random() * moves.length)];
+    if(dims[0]>=12 && dims[1]<=3){
+      newMove = MOVES.R
+      lastMovedCount++
+      totalMoves++
+      _isMoved = true
+      _isTurned = true
+    }
+    else if(dims[0]<=3 && dims[1]<=3){
+      newMove = MOVES.R
+      lastMovedCount++
+      totalMoves++
+      _isMoved = true
+      _isTurned = true
+    }
+
+    else if(dims[0]<=3 && dims[1]<=12){
+      newMove = MOVES.L
+      lastMovedCount++
+      totalMoves++
+      _isMoved = true
+      _isTurned = true
+    }
+
+    else if(dims[0]<=12 && dims[1]<=12){
+      newMove = MOVES.R
+      lastMovedCount++
+      totalMoves++
+      _isMoved = true
+      _isTurned = true
+    }}
+   
+  if(newMove){
+
+    // moves[Math.floor(Math.random() * moves.length)]
     lastMovedCount++
     _isMoved = true
+    totalMoves++
     res.send(newMove);
-  }
+    }
+
   else{
-    res.send(attack);
+    console.log(attack)
     lastMovedCount = 0
     _isMoved = false
+    totalAttacks++
+    res.send(attack);
   }
   _lastMove = newMove
   _lastDim = dims
+  }
   
   // TODO add your implementation here to replace the random response
-});
+);
 
 app.listen(process.env.PORT || 8080);
