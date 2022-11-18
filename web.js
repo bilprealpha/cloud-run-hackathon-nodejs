@@ -31,7 +31,7 @@ app.post('/', function (req, res) {
  let dims = state[myUrl] ? [state[myUrl].x, state[myUrl].y] : [0,0];
 
  console.log('new score ',newScore, 'last score ',lastscore);
- if(newScore >= lastscore){
+ if(newScore > lastscore){
   lastscore = newScore
   if(_isMoved){
     console.log('nomove')
