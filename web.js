@@ -31,6 +31,7 @@ app.post('/', function (req, res) {
 
  console.log('new score ',newScore, 'last score ',lastscore);
  if(newScore > lastscore){
+  lastscore = newScore
   if(_isMoved){
     console.log('nomove')
     newMove = MOVES.T
@@ -49,6 +50,7 @@ app.post('/', function (req, res) {
 
   return
  }
+ lastscore = newScore
   console.log('dims ',JSON.stringify(dims));
   console.log('myDirection ',JSON.stringify(myDirection));
   const moves = ['F', 'L', 'R'];
