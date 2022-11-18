@@ -22,17 +22,23 @@ app.post('/', function (req, res) {
   console.log('last move ',_lastMove);
   console.log('last dim ',_lastDim);
   console.log('is moved ',_isMoved);
-  let dims = req.body.arena.dims;
   let state = req.body.arena.state;
   let newMove = null
+
  let myDirection = state[myUrl].direction;
  let newScore = state[myUrl].score;
+ let dims = [state[myUrl].x, state[myUrl].y];
+
+ console.log('new score ',newScore, 'last score ',lastscore);
  if(newScore > lastscore){
   if(_isMoved){
+    console.log('nomove')
     newMove = MOVES.T
    _isMoved = false
   }
   else{    
+
+    console.log('nomove Attack')
     newMove = MOVES.R
     _isMoved = true
   }
