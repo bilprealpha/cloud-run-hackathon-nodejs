@@ -31,7 +31,7 @@ app.post('/', function (req, res) {
  let dims = [state[myUrl].x, state[myUrl].y];
 
  console.log('new score ',newScore, 'last score ',lastscore);
- if(newScore > lastscore){
+ if(newScore >= lastscore){
   lastscore = newScore
   if(_isMoved){
     console.log('nomove')
@@ -157,7 +157,7 @@ app.post('/', function (req, res) {
     res.send(newMove);
     }
     else{
-      console.log(attack)
+      console.log('attack')
       lastMovedCount = 0
       _isMoved = false
       totalAttacks++
