@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const { MIN, MAX, RIGHTMAX, BOTTOMAX, DIRECTION, MOVES, END } = require('./constants');
+const e = require('express');
 let _isMoved = false
 let _lastMove = ''
 let _lastDim = []
@@ -148,11 +149,20 @@ app.post('/', function (req, res) {
     }
 
   else{
-    console.log(attack)
-    lastMovedCount = 0
-    _isMoved = false
-    totalAttacks++
-    res.send(attack);
+    if(lastscore>newScore){
+      newMove = moves[Math.floor(Math.random() * moves.length)]
+      lastMovedCount++
+      _isMoved = true
+      totalMoves++
+    res.send(newMove);
+    }
+    else{
+      console.log(attack)
+      lastMovedCount = 0
+      _isMoved = false
+      totalAttacks++
+      res.send(attack);
+    }
   }
   _lastMove = newMove
   _lastDim = dims
